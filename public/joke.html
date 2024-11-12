@@ -1,0 +1,37 @@
+<!-- public/joke.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Joke</title>
+    </head>
+    <body>
+        <h1>Joke</h1>
+        <input id="topic" type="text" placeholder="Enter topic" />
+        <div id="output"></div>
+        <button id="get-joke">Get Joke</button>
+
+        <script>
+            // find the get-joke button on the page
+            const getJokeButton = document.querySelector("#get-joke");
+
+            // add an event listener to the button to handle clicks
+            getJokeButton.addEventListener("click", async () => {
+                // show a loading message
+                document.querySelector("#output").textContent = "loading...";
+
+                // get the topic from the input field
+                const topic = document.querySelector("#topic").value;
+
+                // send a request to the server to get a joke, wait
+                const response = await fetch(`/api/joke?topic=${topic}`);
+                const joke = await response.text();
+
+                // display the joke on the page
+                document.querySelector("#output").textContent = joke;
+            });
+        </script>
+    </body>
+</html>

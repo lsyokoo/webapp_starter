@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Dice Roll</title>
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <h1>Let's Roll the Dice!</h1>
+        <button id="roll">Roll d6</button>
+        <img id="diceGif" src="dice.gif" alt="Rolling Dice" />
+        <div id="diceResult"></div>
+
+        <!-- handle button click and fetch roll result -->
+        <script>
+            document.getElementById("roll").addEventListener("click", () => {
+                fetch(`/api/d6`)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        document.getElementById("diceResult").innerText =
+                            `You rolled: ${data.result}`;
+                    });
+            });
+        </script>
+    </body>
+</html>

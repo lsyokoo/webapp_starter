@@ -1,0 +1,43 @@
+<!-- public/joke.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Limerick Generator</title>
+        <link rel="stylesheet" href="limerick.css" />
+    </head>
+    <body>
+        <h1>Limerick Generator</h1>
+        <input id="name" type="text" placeholder="Enter name" />
+        <input id="location" type="text" placeholder="Enter location" />
+        <div id="output"></div>
+        <button id="get-limerick">Get Limerick</button>
+
+        <script>
+            // find the get-limerick button on the page
+            const getLimerickButton = document.querySelector("#get-limerick");
+
+            // add an event listener to the button to handle clicks
+            getLimerickButton.addEventListener("click", async () => {
+                // show a loading message
+                document.querySelector("#output").textContent = "loading...";
+
+                // get the name&location from the input field
+                const name = document.querySelector("#name").value;
+                const location = document.querySelector("#location").value;
+
+                // send a request to the server to get a limerick, wait
+                const response = await fetch(
+                    `/api/limerick?name=${name}&location=${location}`, //!!!!!no space!!!!
+                );
+
+                const limerick = await response.text();
+
+                // display the limerick on the page
+                document.querySelector("#output").textContent = limerick;
+            });
+        </script>
+    </body>
+</html>
