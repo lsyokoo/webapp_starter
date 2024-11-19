@@ -32,15 +32,26 @@
             style="display: none; max-width: 100%; margin-top: 20px"
         />
 
+        <!-- Satisfaction buttons -->
+        <div id="satisfaction-buttons" style="display: none; margin-top: 20px">
+            <button id="satisfied">Satisfied</button>
+            <button id="regenerate">Not Satisfied (Regenerate)</button>
+        </div>
+
         <script>
             const getHairstyleButton = document.querySelector("#get-hairstyle");
             const generateImageButton = document.querySelector("#generate-image");
             const outputElement = document.querySelector("#output");
             const hairstyleImage = document.querySelector("#hairstyle-image");
 
-            //add listener to the button
+            // Select satisfaction buttons
+            const satisfactionButtons = document.querySelector("#satisfaction-buttons");
+            const satisfiedButton = document.querySelector("#satisfied");
+            const regenerateButton = document.querySelector("#regenerate");
+
+            //add listener to the description button
             getHairstyleButton.addEventListener("click", async () => {
-                outputElement.textContent = "loading...."; //displayed message when fetching
+                outputElement.textContent = "loading..."; //displayed message when fetching
                 //get user inputs
                 const age = document.querySelector("#age").value;
                 const gender = document.querySelector("#gender").value;
@@ -53,30 +64,68 @@
                 const data = await response.text();
 
                 // display the description in the outputElement
-                outputElement.textContent = data;
+                // outputElement.textContent = data;
+                // outputElement.innerText = data; //for multi lines display!
+                outputElement.innerHTML = data.replace(/\n/g, "<br>"); //new way to display multi lines
+
+                // Hide the button after it is clicked
+                getHairstyleButton.style.display = "none";
 
                 // show image preview button after description is displayed,from none to block visible
                 generateImageButton.style.display = "block";
 
                 // add listener to image button
                 generateImageButton.onclick = async () => {
+                    // Hide the image button when clicked
+                    generateImageButton.style.display = "none";
+
                     //display loading message anda hide the image
                     hairstyleImage.style.display = "none";
                     outputElement.textContent += "\n\n\n\n\nGenerating image...";
 
-                    //send request toserver to generate image based on description *** Asked gpt here, reference:https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent
+                    //send request toserver to generate image based on description *** Asked chatgpt here, reference:https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent
                     const imageResponse = await fetch(
                         `/api/generate-image?description=${encodeURIComponent(data)}`,
                     );
                     const imageData = await imageResponse.json();
 
-                    // display the generated image if response has valid url **aseked gpt
+                    // display the generated image if response has valid url **aseked chatgpt here
                     if (imageData.imageUrl) {
                         hairstyleImage.src = imageData.imageUrl;
                         hairstyleImage.style.display = "block"; //from none to block-visible
                         outputElement.textContent = data; // reset to show only description
+                        // Show satisfaction buttons
+                        satisfactionButtons.style.display = "block";
                     }
                 };
+            });
+
+            // Add listener to the regenerate button
+            regenerateButton.addEventListener("click", async () => {
+                hairstyleImage.style.display = "none";
+                outputElement.textContent += "\n\nRegenerating image...";
+                satisfactionButtons.style.display = "none"; // Hide buttons during regeneration
+
+                const data = outputElement.textContent.split("\n\n")[0]; // Extract the description
+
+                const imageResponse = await fetch(
+                    `/api/generate-image?description=${encodeURIComponent(data)}`,
+                );
+                const imageData = await imageResponse.json();
+
+                if (imageData.imageUrl) {
+                    hairstyleImage.src = imageData.imageUrl;
+                    hairstyleImage.style.display = "block";
+                    satisfactionButtons.style.display = "block"; // Show buttons after regeneration
+                    outputElement.textContent = data; // Reset to show only the description
+                }
+            });
+
+            // Add listener to the satisfied button
+            satisfiedButton.addEventListener("click", () => {
+                satisfactionButtons.style.display = "none";
+                outputElement.textContent +=
+                    "\n\nThank you for consulting with Virtual Hairstyle Stylist!";
             });
         </script>
     </body>

@@ -9,7 +9,8 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
+    /* solve scrolling issue;not height: */
 }
 
 h1 {
@@ -71,6 +72,10 @@ button:active {
     font-weight: bold;
     color: #5a4761;
     white-space: pre-wrap;
+    /* display long and complete paragraph */
+    word-wrap: break-word;
+    max-width: 80%;
+    overflow: auto;
 }
 
 #hairstyle-image {
