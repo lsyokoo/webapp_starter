@@ -1,131 +1,146 @@
-<!-- public/hairstyle.html -->
+<!-- public/hairstyle.html final version-->
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Virtual Hair Stylist</title>
         <link rel="stylesheet" href="hairstyle.css" />
+        <!-- google fonts scope one -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Scope+One&display=swap"
+            rel="stylesheet"
+        />
     </head>
     <body>
-        <h1>Virtual Hair Stylist</h1>
+        <!-- Fullscreen landing image -->
+        <<div id="landing-section">
+            <div id="landing-content">
+                <h1>Virtual Stylist</h1>
+                <p>Discover the perfect hairstyle tailored just for you.</p>
+            </div>
+        </div>
 
-        <!-- 3 boxes for user to fill in, with instruction-->
-        <input id="age" type="text" placeholder="Enter age" />
-        <input id="gender" type="text" placeholder="Enter gender" />
-        <input id="style" type="text" placeholder="Enter style preference" />
+        <!-- container of 2 halves UI of input and output-->
+        <div id="main-container">
+            <!-- Left section: 3 parts of user input -->
+            <div id="left-section">
+                <div id="input-row">
+                    <!-- Age input -->
+                    <div>
+                        <label for="age">Enter your age:</label>
+                        <input
+                            id="age"
+                            type="number"
+                            placeholder="Age"
+                        />
+                    </div>
 
-        <!-- show generated description -->
-        <div id="output"></div>
+                    <!-- Gender input -->
+                    <div>
+                        <label for="gender">Select your gender:</label>
+                        <select id="gender">
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Non-binary">Non-binary</option>
+                            <option value="Prefer not to say">
+                                Prefer not to say
+                            </option>
+                        </select>
+                    </div>
+                    <!-- Style preference input -->
+                    <div>
+                        <label for="style">Enter your style preference:</label>
+                        <p class="instruction">
+                            Describe desired texture, length, color, etc.
+                        </p>
+                        <textarea
+                            id="style"
+                            placeholder="e.g., I want a shoulder-length wavy hairstyle with warm brown highlights."
+                        ></textarea>
+                    </div>
+                </div>
 
-        <button id="get-hairstyle">Get Hairstyle Description</button>
+                <button id="generate-button">
+                    Generate Description and Preview
+                </button>
+            </div>
 
-        <!-- hidden until description is shown up -->
-        <button id="generate-image" style="display: none">
-            See Hairstyle Preview
-        </button>
-
-        <!-- dalle generated image based on description; default hidden -->
-        <img
-            id="hairstyle-image"
-            alt="Generated hairstyle preview"
-            style="display: none; max-width: 100%; margin-top: 20px"
-        />
-
-        <!-- Satisfaction buttons -->
-        <div id="satisfaction-buttons" style="display: none; margin-top: 20px">
-            <button id="satisfied">Satisfied</button>
-            <button id="regenerate">Not Satisfied (Regenerate)</button>
+            <!-- Right section: output -->
+            <div id="right-section">
+                <div id="loading-text" style="display: none">Loading...</div>
+                <div id="output" style="display: none"></div>
+                <img
+                    id="hairstyle-image"
+                    alt="Generated hairstyle preview"
+                    style="display: none"
+                />
+            </div>
         </div>
 
         <script>
-            const getHairstyleButton = document.querySelector("#get-hairstyle");
-            const generateImageButton = document.querySelector("#generate-image");
+            const generateButton = document.querySelector("#generate-button");
+            const loadingText = document.querySelector("#loading-text");
             const outputElement = document.querySelector("#output");
             const hairstyleImage = document.querySelector("#hairstyle-image");
 
-            // Select satisfaction buttons
-            const satisfactionButtons = document.querySelector("#satisfaction-buttons");
-            const satisfiedButton = document.querySelector("#satisfied");
-            const regenerateButton = document.querySelector("#regenerate");
+            // Reset UI when user edit their inputs
+            const inputs = document.querySelectorAll("#age, #gender, #style");
+            inputs.forEach((input) => {
+                input.addEventListener("input", () => {
+                    outputElement.style.display = "none";
+                    outputElement.textContent = "";
+                    hairstyleImage.style.display = "none";
+                    hairstyleImage.src = "";
+                    loadingText.style.display = "none";
+                });
+            });
 
-            //add listener to the description button
-            getHairstyleButton.addEventListener("click", async () => {
-                outputElement.textContent = "loading..."; //displayed message when fetching
+            // add listener to the generate button
+            generateButton.addEventListener("click", async () => {
+                //displayed message when fetching;hide first and then ensure image and paragraph show up at the same time
+                loadingText.style.display = "block";
+                loadingText.textContent = "Loading...";
+                outputElement.style.display = "none";
+                hairstyleImage.style.display = "none";
+
                 //get user inputs
                 const age = document.querySelector("#age").value;
                 const gender = document.querySelector("#gender").value;
                 const style = document.querySelector("#style").value;
 
-                // Send request to server to get description
-                const response = await fetch(
-                    `/api/hairstyle?age=${age}&gender=${gender}&style=${style}`,
-                );
-                const data = await response.text();
-
-                // display the description in the outputElement
-                // outputElement.textContent = data;
-                // outputElement.innerText = data; //for multi lines display!
-                outputElement.innerHTML = data.replace(/\n/g, "<br>"); //new way to display multi lines
-
-                // Hide the button after it is clicked
-                getHairstyleButton.style.display = "none";
-
-                // show image preview button after description is displayed,from none to block visible
-                generateImageButton.style.display = "block";
-
-                // add listener to image button
-                generateImageButton.onclick = async () => {
-                    // Hide the image button when clicked
-                    generateImageButton.style.display = "none";
-
-                    //display loading message anda hide the image
-                    hairstyleImage.style.display = "none";
-                    outputElement.textContent += "\n\n\n\n\nGenerating image...";
+                try {
+                    // Send request to server to get description
+                    const descriptionResponse = await fetch(
+                        `/api/hairstyle?age=${age}&gender=${gender}&style=${style}`,
+                    );
+                    const description = await descriptionResponse.text();
 
                     //send request toserver to generate image based on description *** Asked chatgpt here, reference:https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent
                     const imageResponse = await fetch(
-                        `/api/generate-image?description=${encodeURIComponent(data)}`,
+                        `/api/generate-image?description=${
+                            encodeURIComponent(description)
+                        }`,
                     );
                     const imageData = await imageResponse.json();
+
+                    // Hide loading text and display both text and image
+                    loadingText.style.display = "none";
+                    if (description) {
+                        outputElement.textContent = description.replace(/\n/g, "<br>");
+                        outputElement.style.display = "block";
+                    }
 
                     // display the generated image if response has valid url **aseked chatgpt here
                     if (imageData.imageUrl) {
                         hairstyleImage.src = imageData.imageUrl;
                         hairstyleImage.style.display = "block"; //from none to block-visible
-                        outputElement.textContent = data; // reset to show only description
-                        // Show satisfaction buttons
-                        satisfactionButtons.style.display = "block";
+                        // outputElement.textContent = data; // reset to show only description
                     }
-                };
-            });
-
-            // Add listener to the regenerate button
-            regenerateButton.addEventListener("click", async () => {
-                hairstyleImage.style.display = "none";
-                outputElement.textContent += "\n\nRegenerating image...";
-                satisfactionButtons.style.display = "none"; // Hide buttons during regeneration
-
-                const data = outputElement.textContent.split("\n\n")[0]; // Extract the description
-
-                const imageResponse = await fetch(
-                    `/api/generate-image?description=${encodeURIComponent(data)}`,
-                );
-                const imageData = await imageResponse.json();
-
-                if (imageData.imageUrl) {
-                    hairstyleImage.src = imageData.imageUrl;
-                    hairstyleImage.style.display = "block";
-                    satisfactionButtons.style.display = "block"; // Show buttons after regeneration
-                    outputElement.textContent = data; // Reset to show only the description
+                } catch (error) {
+                    loadingText.textContent = "Error occurred. Please try again.";
                 }
-            });
-
-            // Add listener to the satisfied button
-            satisfiedButton.addEventListener("click", () => {
-                satisfactionButtons.style.display = "none";
-                outputElement.textContent +=
-                    "\n\nThank you for consulting with Virtual Hairstyle Stylist!";
             });
         </script>
     </body>

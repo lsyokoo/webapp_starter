@@ -1,51 +1,172 @@
+/* css final version */
 body {
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-    text-align: center;
+    font-family: "Scope One", serif;
     margin: 0;
     padding: 0;
     background-color: #e6e1e5;
     color: #4b3f51;
+}
+
+/* Override text elements!!*/
+h1, h2, h3, h4, h5, h6, p, label, input, textarea, button {
+    font-family: "Scope One", serif;
+}
+
+/* landing section */
+#landing-section {
+    width: 100%;
+    height: 100vh; /* full viewport*/
+    background: url("./landing.jpg") no-repeat center center;
+    background-size: cover; /* Ensure it covers the entire page */
+    position: relative; /* child element centering */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#landing-content {
+    text-align: center;
+}
+
+#landing-content h1 {
+    font-size: 80px;
+    color: #524a5a;
+    margin: 0 0 10px 0;
+    font-weight: bold;
+}
+
+#landing-content p {
+    color: #7d6b8f;
+    font-size: 28px;
+    margin: 0;
+}
+
+/* container for 2 halves layout of input and output*/
+#main-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100vh; /* full viewport */
+    gap: 1px;
+}
+
+/* Left section- input area */
+#left-section {
+    flex: 0.6;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    /* solve scrolling issue;not height: */
+    padding: 20px;
+    background: url("./inputbg.jpg") no-repeat center center;
+    background-size: cover; /* covers entire section */
+    background-color: rgba(
+        255,
+        255,
+        255,
+        0.6
+    ); /* semi-transparent overlay for readability */
+    background-blend-mode: overlay;
+    box-sizing: border-box;
+    gap: 30px;
 }
 
-h1 {
-    font-size: 28px;
-    color: #5a4761;
-    margin-bottom: 20px;
+#left-section > * {
+    position: relative; /* input above background */
+    z-index: 1;
 }
 
 label {
-    display: block;
-    margin-top: 10px;
-    font-size: 18px;
-    color: #7d6b8b;
+    font-size: 16px;
+    font-weight: bold;
+    color: #5a4761;
+    margin-bottom: 5px;
+    text-align: center;
 }
 
-input {
-    margin-top: 10px;
+/* gender selection part */
+select {
+    width: 100%;
     padding: 10px;
     font-size: 16px;
+    font-family: "Scope One", serif;
     border: 1px solid #a390b1;
     border-radius: 4px;
-    width: 200px;
-    box-sizing: border-box;
     background-color: #f4f0f5;
     color: #4b3f51;
 }
 
-input:focus {
+select option {
+    font-family: "Scope One", serif;
+}
+
+select:focus {
     border-color: #bca0c9;
     outline: none;
     box-shadow: 0 0 5px rgba(188, 160, 201, 0.5);
 }
 
+/* style preference part */
+.instruction {
+    font-size: 14px;
+    color: #7d6b8f;
+    margin-top: -5px;
+    margin-bottom: 2px;
+    text-align: center;
+    font-style: italic;
+}
+
+/* overall layout of the 3 inputs */
+#input-row {
+    display: flex;
+    flex-direction: column;
+    width: 60%;
+    gap: 20px;
+}
+
+#input-row > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 94%;
+}
+
+input,
+textarea {
+    margin-top: 5px;
+    padding: 10px;
+    font-size: 16px;
+    font-family: "Scope One", serif;
+    border: 1px solid #a390b1;
+    border-radius: 4px;
+    width: 94%;
+    background-color: #f4f0f5;
+    color: #4b3f51;
+}
+
+/* longer style preference input box to provide enough space when user type in long text */
+textarea {
+    font-family: "Scope One", serif;
+    height: 170px;
+    resize: none;
+}
+
+/* same font for placeholder of preference input */
+textarea::placeholder {
+    font-family: "Scope One", serif;
+    color: #7d6b8b;
+    font-size: 14px;
+}
+
+input:focus,
+textarea:focus {
+    border-color: #bca0c9;
+    outline: none;
+    box-shadow: 0 0 5px rgba(188, 160, 201, 0.5);
+}
+
+/* Button */
 button {
-    margin-top: 20px;
     padding: 12px 24px;
     font-size: 16px;
     background-color: #7d6b8b;
@@ -54,6 +175,7 @@ button {
     border-radius: 6px;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
+    align-self: center;
 }
 
 button:hover {
@@ -66,23 +188,39 @@ button:active {
     transform: scale(0.98);
 }
 
-#output {
-    margin-top: 20px;
-    font-size: 22px;
+/* right section-output area */
+#right-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: #f0f0f0;
+    box-sizing: border-box;
+    gap: 20px;
+}
+
+#loading-text {
+    font-size: 18px;
     font-weight: bold;
     color: #5a4761;
-    white-space: pre-wrap;
-    /* display long and complete paragraph */
+    text-align: center;
+}
+
+#output {
+    width: 70%; /*  width of the paragraph matches the width of image */
+    font-size: 18px;
+    font-weight: normal;
+    color: #5a4761;
+    text-align: center;
+    white-space: pre-wrap; /* display long and complete paragraph */
     word-wrap: break-word;
-    max-width: 80%;
-    overflow: auto;
 }
 
 #hairstyle-image {
-    display: block;
-    max-width: 50%;
+    max-width: 70%; /* image and text widths match */
     height: auto;
-    margin-top: 20px;
-    border: 2px solid #a390b1;
     border-radius: 8px;
+    margin-top: 10px;
 }

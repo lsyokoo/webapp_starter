@@ -1,4 +1,4 @@
-// Simple Deno backend with a static server and a custom route that
+// Final Version-Simple Deno backend with a static server and a custom route that
 // uses the OpenAI API to generate hairstyle description and image.
 
 // Import the the Application and Router classes from the Oak module
@@ -14,7 +14,7 @@ import { promptDalle, promptGPT } from "./shared/openai.ts";
 const app = new Application();
 const router = new Router();
 
-// Create a route to handle requests to /api/limerick
+// Create a route to handle requests to /api/hairstyle
 router.get("/api/hairstyle", async (ctx) => {
     // Get the parameters(age,gender,style)  from the query string `?age=...``?gender=...``?style=...`
     const age = ctx.request.url.searchParams.get("age");
@@ -31,7 +31,11 @@ router.get("/api/hairstyle", async (ctx) => {
 
     // Ask GPT to generate a detailed hairstyle description
     const description = await promptGPT(
-        `Please refine and improve the hairstyle request based on the following user input: "${stylePreference}". This is for a ${age}-year-old ${gender}. Create a clear and comprehensive description suitable for directly showing to a hairdresser, including details like length, layers, color, texture, and any other relevant features. Do not include any introductory phrases.Remove any Markdown formatting and ensure all paragraphs are clear and fully displayed.`,
+        `Please refine and improve the hairstyle request based on the following user input: "${stylePreference}". This is for a ${age}-year-old ${gender}. Create a clear and comprehensive description suitable for directly showing to a hairdresser, including details like age, gender, length, layers, color, texture, and any other relevant features. Do not include any introductory phrases.Remove any Markdown formatting and ensure all paragraphs are clear and fully displayed. The description should be limited to 50 words. `,
+        {
+            max_tokens: 100,
+            temperature: 0.7,
+        },
     );
 
     // Send the generated hair description back to the client
